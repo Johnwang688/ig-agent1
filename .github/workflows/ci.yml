@@ -43,7 +43,7 @@ jobs:
       - name: Generate post
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: chatgpt-5.4-nano
+          OPENAI_MODEL: gpt-5.4-nano
           PLACID_API_TOKEN: ${{ secrets.PLACID_API_TOKEN }}
           PLACID_BASE_URL: https://api.placid.app/api/rest
         run: python app.py generate --topic "Faith and resilience"
@@ -69,7 +69,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           PLACID_API_TOKEN: ${{ secrets.PLACID_API_TOKEN }}
           PLACID_BASE_URL: https://api.placid.app/api/rest
-          OPENAI_MODEL: chatgpt-5.4-nano
+          OPENAI_MODEL: gpt-5.4-nano
         run: |
           timeout 10 uvicorn web.main:app --host 0.0.0.0 --port 8000 &
           sleep 5

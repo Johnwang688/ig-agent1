@@ -9,7 +9,7 @@ from pathlib import Path
 class Settings:
     openai_api_key: str = ""
     openai_base_url: str = "https://api.openai.com/v1"
-    openai_model: str = "chatgpt-5.4-nano"
+    openai_model: str = "gpt-5.4-nano"
     placid_api_token: str = ""
     placid_base_url: str = "https://api.placid.app/api/rest"
     http_timeout_seconds: int = 60
@@ -27,7 +27,7 @@ class Settings:
             openai_base_url=_env(
                 "OPENAI_BASE_URL", "https://api.openai.com/v1", env_values
             ),
-            openai_model=_env("OPENAI_MODEL", "chatgpt-5.4-nano", env_values),
+            openai_model=_env("OPENAI_MODEL", "gpt-5.4-nano", env_values),
             placid_api_token=_env("PLACID_API_TOKEN", "", env_values),
             placid_base_url=_env(
                 "PLACID_BASE_URL", "https://api.placid.app/api/rest", env_values
