@@ -1,0 +1,42 @@
+[project]
+name = "ai-christian-instagram-pipeline"
+version = "0.1.0"
+description = "Human-in-the-loop Instagram content pipeline for Christian media."
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "jinja2",
+    "python-multipart",
+    "uvicorn",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = true
+py-modules = ["app", "runtime"]
+
+[tool.setuptools.packages.find]
+include = [
+    "agents",
+    "agents.*",
+    "config",
+    "config.*",
+    "models",
+    "models.*",
+    "pipeline",
+    "pipeline.*",
+    "prompts",
+    "prompts.*",
+    "schemas",
+    "schemas.*",
+    "services",
+    "services.*",
+    "web",
+    "web.*",
+]
+
+[tool.setuptools.package-data]
+web = ["templates/*.html"]

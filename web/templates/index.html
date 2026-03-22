@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Generate Content{% endblock %}
+
+{% block content %}
+{% if error_message %}
+<div class="alert">
+  {{ error_message }}
+</div>
+{% endif %}
+<div class="grid two">
+  <div class="card hero">
+    <div class="eyebrow">Content Studio</div>
+    <h1>Generate Content</h1>
+    <p class="meta">Create a new post draft, route it through approval, and keep the whole workflow in one place.</p>
+    <form method="post" action="/generate">
+      <label>
+        Topic
+        <input type="text" name="topic" placeholder="Peer pressure and holiness" required>
+      </label>
+
+      <label>
+        Audience
+        <input type="text" name="audience" value="{{ default_audience }}" required>
+      </label>
+
+      <label>
+        Format
+        <select name="format_name" required>
+          {% for format_name in formats %}
+          <option value="{{ format_name }}">{{ format_name|title }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label>
+        Template
+        <select name="template_id">
+          <option value="">Auto-select (match format)</option>
+          {% for t in templates %}
+          <option value="{{ t.id }}">{{ t.style_family }} ({{ t.format }})</option>
+          {% endfor %}
+        </select>
+        {% if template_errors %}
+        <span class="meta" style="display:block; margin-top:6px; color:#f87171;">{{ template_errors|join(" ") }}</span>
+        {% endif %}
+      </label>
+
+      <button type="submit">Generate Post</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="section-title">
+      <div>
+        <div class="eyebrow">Overview</div>
+        <h2 style="margin-bottom: 6px;">Dashboard</h2>
+      </div>
+      <a class="pill" href="/review-queue">Open Queue</a>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="meta">Total posts</div>
+        <div class="stat-value">{{ counts.total }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="meta">In review</div>
+        <div class="stat-value">{{ counts.in_review }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="meta">Approved</div>
+        <div class="stat-value">{{ counts.approved }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="meta">Rejected</div>
+        <div class="stat-value">{{ counts.rejected }}</div>
+      </div>
+    </div>
+    <div class="muted-box" style="margin-top: 18px;">
+      <strong style="display:block; margin-bottom: 6px;">Workflow reminder</strong>
+      <div class="meta">Posts stay blocked until someone reviews them in the queue, which keeps approval in human hands.</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+
+{% block title %}Post Detail{% endblock %}
+
+{% block content %}
+<div class="card hero">
+  <div class="split">
+    <div>
+      <div class="eyebrow">Post Review</div>
+      <h1 style="margin-bottom: 6px;">{{ post.title or post.topic }}</h1>
+      <div class="meta">Post ID: {{ post.id }}</div>
+    </div>
+    <div class="pill">{{ post.status.value }}</div>
+  </div>
+</div>
+
+<div class="grid two">
+  <!-- Instagram Preview -->
+  <div class="card">
+    <div class="section-title">
+      <div>
+        <div class="eyebrow">Preview</div>
+        <h2 style="margin-bottom: 0;">Instagram Preview</h2>
+      </div>
+    </div>
+    <div class="ig-preview">
+      <div class="ig-phone">
+        <div class="ig-screen">
+          <div class="ig-post-area">
+            {% if post.render_url %}
+            <img src="{{ post.render_url }}" alt="Rendered post" class="ig-render-img">
+            {% elif post.slide_text %}
+            <div class="ig-slides-mock">
+              {% for slide in post.slide_text %}
+              <div class="ig-slide-card {% if loop.first %}active{% endif %}" data-slide="{{ loop.index }}">
+                <p>{{ slide }}</p>
+              </div>
+              {% endfor %}
+              {% if post.slide_text|length > 1 %}
+              <div class="ig-slide-dots">
+                {% for slide in post.slide_text %}
+                <span class="dot {% if loop.first %}active{% endif %}" data-slide="{{ loop.index }}"></span>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+            {% else %}
+            <div class="ig-placeholder">
+              <span>No preview yet</span>
+              <small>Rendered asset or slides will appear here</small>
+            </div>
+            {% endif %}
+          </div>
+          <div class="ig-caption-area">
+            <div class="ig-caption-text">
+              {% if post.format.value == "reel" and post.reel_script %}
+              {{ (post.reel_script or "")|truncate(125) }}{% if post.cta %} {{ post.cta }}{% endif %}
+              {% else %}
+              {{ (post.caption or "")|truncate(125) }}{% if post.cta %} {{ post.cta }}{% endif %}
+              {% endif %}
+            </div>
+            <div class="ig-hashtags">
+              {% for tag in (post.hashtags or [])[:5] %}
+              <span class="ig-tag">{{ tag }}</span>
+              {% endfor %}
+              {% if post.hashtags and post.hashtags|length > 5 %}
+              <span class="ig-more">more</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="ig-preview-hint meta">How this will look when posted</p>
+    </div>
+  </div>
+
+  <!-- Editable Content -->
+  <div class="card">
+    <div class="section-title">
+      <div>
+        <div class="eyebrow">Content</div>
+        <h2 style="margin-bottom: 0;">Edit Content</h2>
+      </div>
+      <button type="submit" form="edit-content-form" class="pill btn-save">Save edits</button>
+    </div>
+    <form id="edit-content-form" method="post" action="/posts/{{ post.id }}/edit">
+      <div class="edit-fields">
+        <div class="detail-item readonly"><strong>Topic</strong>{{ post.topic }}</div>
+        <div class="detail-item readonly"><strong>Audience</strong>{{ post.audience }}</div>
+        <div class="detail-item readonly"><strong>Format</strong>{{ post.format.value }}</div>
+
+        <label class="edit-label">
+          <strong>Hook</strong>
+          <textarea name="hook" rows="2" placeholder="Opening hook...">{{ post.hook or "" }}</textarea>
+        </label>
+        <label class="edit-label">
+          <strong>Scripture</strong>
+          <input type="text" name="scripture" value="{{ post.scripture or "" }}" placeholder="Verse reference">
+        </label>
+        <label class="edit-label">
+          <strong>Angle</strong>
+          <textarea name="angle" rows="2" placeholder="Main angle or takeaway">{{ post.angle or "" }}</textarea>
+        </label>
+        <label class="edit-label">
+          <strong>Caption</strong>
+          <textarea name="caption" rows="3" placeholder="Post caption">{{ post.caption or "" }}</textarea>
+        </label>
+        <label class="edit-label">
+          <strong>CTA</strong>
+          <input type="text" name="cta" value="{{ post.cta or "" }}" placeholder="Call to action">
+        </label>
+        <label class="edit-label">
+          <strong>Reel Script</strong>
+          <textarea name="reel_script" rows="4" placeholder="Script for reel voiceover">{{ post.reel_script or "" }}</textarea>
+        </label>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="grid two">
+  <!-- Slides (editable if carousel) -->
+  {% if post.slide_text or post.format.value == "carousel" %}
+  <div class="card">
+    <div class="section-title">
+      <div>
+        <div class="eyebrow">Asset</div>
+        <h2 style="margin-bottom: 0;">Slides</h2>
+      </div>
+      <button type="submit" form="edit-slides-form" class="pill btn-save">Save slides</button>
+    </div>
+    <form id="edit-slides-form" method="post" action="/posts/{{ post.id }}/edit-slides">
+      <label class="edit-label">
+        <strong>One slide per block (separate with <code>---</code>)</strong>
+        <textarea name="slides" rows="8" placeholder="Slide 1 text&#10;---&#10;Slide 2 text&#10;---&#10;Slide 3 text">{{ post.slide_text|join("\n---\n") if post.slide_text else "" }}</textarea>
+      </label>
+    </form>
+  </div>
+  {% endif %}
+
+  <!-- Hashtags -->
+  <div class="card">
+    <div class="section-title">
+      <div>
+        <div class="eyebrow">Asset</div>
+        <h2 style="margin-bottom: 0;">Hashtags & Render</h2>
+      </div>
+      <button type="submit" form="edit-hashtags-form" class="pill btn-save">Save hashtags</button>
+    </div>
+    <form id="edit-hashtags-form" method="post" action="/posts/{{ post.id }}/edit-hashtags">
+      <label class="edit-label">
+        <strong>Hashtags (space-separated)</strong>
+        <input type="text" name="hashtags" value="{{ post.hashtags|join(" ") if post.hashtags else "" }}" placeholder="#faith #teens #bible">
+      </label>
+    </form>
+    <div class="detail-list" style="margin-top: 16px;">
+      <div class="detail-item"><strong>Template</strong>{{ post.template_id or "Not set" }}</div>
+      <div class="detail-item">
+        <strong>Render URL</strong>
+        {% if post.render_url %}
+        <a href="{{ post.render_url }}" target="_blank" rel="noreferrer">Open rendered asset</a>
+        {% else %}
+        Not available
+        {% endif %}
+      </div>
+      <div class="detail-item"><strong>Review Notes</strong>{{ post.review_notes or "None" }}</div>
+      <div class="detail-item"><strong>Risk Flags</strong>{{ post.risk_flags|join(", ") if post.risk_flags else "none" }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="section-title">
+    <div>
+      <div class="eyebrow">Decision</div>
+      <h2 style="margin-bottom: 0;">Approve or Reject</h2>
+    </div>
+  </div>
+  <div class="actions">
+    <form method="post" action="/posts/{{ post.id }}/review">
+      <input type="hidden" name="decision" value="approve">
+      <label>
+        Review notes
+        <textarea name="review_notes" placeholder="Optional approval notes or requested changes"></textarea>
+      </label>
+      <button type="submit">Approve Post</button>
+    </form>
+
+    <form method="post" action="/posts/{{ post.id }}/review">
+      <input type="hidden" name="decision" value="reject">
+      <label>
+        Review notes
+        <textarea name="review_notes" placeholder="Explain why this needs revision"></textarea>
+      </label>
+      <button type="submit" class="danger">Reject Post</button>
+    </form>
+  </div>
+</div>
+
+<style>
+.ig-preview { text-align: center; }
+.ig-phone {
+  margin: 0 auto;
+  width: 280px;
+  padding: 12px;
+  background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+  border-radius: 36px;
+  border: 3px solid #333;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.ig-screen {
+  background: #000;
+  border-radius: 24px;
+  overflow: hidden;
+  aspect-ratio: 9/16;
+  max-height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+.ig-post-area {
+  flex: 1;
+  background: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+.ig-render-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ig-slides-mock { position: relative; width: 100%; height: 100%; }
+.ig-slide-card {
+  display: none;
+  padding: 24px;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.ig-slide-card.active { display: flex; }
+.ig-slide-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+.ig-slide-dots .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  cursor: pointer;
+}
+.ig-slide-dots .dot.active { background: var(--accent); }
+.ig-placeholder {
+  color: var(--muted);
+  text-align: center;
+  padding: 24px;
+}
+.ig-placeholder span { display: block; margin-bottom: 6px; }
+.ig-placeholder small { font-size: 0.8rem; }
+.ig-caption-area {
+  padding: 12px 14px;
+  background: #000;
+  border-top: 1px solid #222;
+  text-align: left;
+}
+.ig-caption-text {
+  font-size: 0.85rem;
+  color: var(--text);
+  line-height: 1.4;
+}
+.ig-hashtags { margin-top: 8px; }
+.ig-tag {
+  font-size: 0.8rem;
+  color: var(--accent-soft);
+  margin-right: 6px;
+}
+.ig-more { font-size: 0.75rem; color: var(--muted); }
+.ig-preview-hint { margin-top: 12px; }
+
+.edit-fields { display: grid; gap: 12px; }
+.edit-label { margin: 0; }
+.edit-label textarea, .edit-label input { margin-top: 6px; }
+.edit-label strong { display: block; }
+.detail-item.readonly { margin-bottom: 0; }
+.btn-save {
+  background: var(--accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 8px 16px;
+  font-weight: 600;
+}
+.btn-save:hover { opacity: 0.95; }
+code { font-size: 0.85em; background: rgba(168,85,247,0.2); padding: 2px 6px; border-radius: 4px; }
+</style>
+
+<script>
+document.querySelectorAll('.ig-slide-dots .dot').forEach(function(dot) {
+  dot.addEventListener('click', function() {
+    var slide = this.dataset.slide;
+    document.querySelectorAll('.ig-slide-card').forEach(function(c) { c.classList.remove('active'); });
+    document.querySelectorAll('.ig-slide-dots .dot').forEach(function(d) { d.classList.remove('active'); });
+    document.querySelector('.ig-slide-card[data-slide="' + slide + '"]').classList.add('active');
+    this.classList.add('active');
+  });
+});
+</script>
+{% endblock %}

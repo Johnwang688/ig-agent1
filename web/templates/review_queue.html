@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Review Queue{% endblock %}
+
+{% block content %}
+<div class="card hero">
+  <div class="eyebrow">Human Review</div>
+  <h1>Review Queue</h1>
+  <p class="meta">Posts waiting for approval before they can move forward.</p>
+</div>
+
+<div class="card">
+  {% if posts %}
+    <div class="grid">
+      {% for post in posts %}
+      <div class="list-card">
+        <div class="split">
+          <div>
+            <strong style="font-size: 1.1rem;">{{ post.title or post.topic }}</strong>
+            <div class="meta">{{ post.topic }}</div>
+          </div>
+          <div class="pill">{{ post.format.value }}</div>
+        </div>
+        <p style="margin: 14px 0 10px;">{{ post.hook or post.angle or "No summary yet." }}</p>
+        <div class="stack-sm">
+          <div class="meta">Scripture: {{ post.scripture or "Not set" }}</div>
+          <div class="meta">Risk flags: {{ post.risk_flags|join(", ") if post.risk_flags else "none" }}</div>
+        </div>
+        <p style="margin-top: 16px;"><a href="/posts/{{ post.id }}">Open review page</a></p>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="empty">No posts are waiting for review.</p>
+  {% endif %}
+</div>
+{% endblock %}

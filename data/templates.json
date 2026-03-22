@@ -1,0 +1,32 @@
+[
+  {
+    "id": "carousel_teaching_minimal_v1",
+    "renderer": "placid",
+    "format": "carousel",
+    "style_family": "cinematic_minimal",
+    "max_title_chars": 55,
+    "max_subtitle_chars": 110,
+    "max_cta_chars": 30,
+    "max_verse_chars": 32,
+    "layer_map": {
+      "title": "headline_layer",
+      "caption": "subhead_layer",
+      "scripture": "verse_layer",
+      "cta": "footer_layer"
+    }
+  },
+  {
+    "id": "reel_cover_bold_v1",
+    "renderer": "placid",
+    "format": "reel",
+    "style_family": "cinematic_minimal",
+    "max_title_chars": 45,
+    "max_subtitle_chars": 0,
+    "max_cta_chars": 0,
+    "max_verse_chars": 24,
+    "layer_map": {
+      "title": "headline_layer",
+      "scripture": "verse_layer"
+    }
+  }
+]
